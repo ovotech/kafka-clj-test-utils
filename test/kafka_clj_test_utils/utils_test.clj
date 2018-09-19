@@ -23,7 +23,7 @@
 (def ig-config {:kafka-clj-utils.schema-registry/client {:base-url "http://localhost:8081"}})
 
 (def config (assoc-in ig-config
-                      [:kafka/config :bootstrap.servers] "127.0.0.1:9092"))
+                      [:kafka-config :bootstrap.servers] "127.0.0.1:9092"))
 
 
 (use-fixtures :each (partial ms/with-around-fns [zkr/with-zookareg-fn

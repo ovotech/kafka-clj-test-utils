@@ -32,6 +32,6 @@
        (deref (.send p (ProducerRecord. topic (str (UUID/randomUUID)) val)))
        (.flush p))))
   ([config topic schema val]
-   (let [kafka-config                 (:kafka/config config)
+   (let [kafka-config                 (:kafka-config config)
          kafka-schema-registry-config (:kafka-clj-utils.schema-registry/client config)]
      (produce kafka-config kafka-schema-registry-config topic schema val))))

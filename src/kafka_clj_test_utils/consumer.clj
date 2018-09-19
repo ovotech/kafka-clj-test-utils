@@ -58,7 +58,7 @@
          k-consumer (KafkaConsumer. cc key-deserializer value-deserializer)]
      (try (f k-consumer) (finally (.close k-consumer)))))
   ([config f]
-    (let [kafka-config                 (:kafka/config config)
+    (let [kafka-config                 (:kafka-config config)
           kafka-schema-registry-config (:kafka-clj-utils.schema-registry/client config)]
       (with-consumer kafka-config kafka-schema-registry-config f))))
 
