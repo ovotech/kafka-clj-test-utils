@@ -1,12 +1,28 @@
 (ns kafka-clj-test-utils.utils-test
   (:require [clojure.test :refer :all]
-            [vise890.multistub.core :as ms]
             [kafka-clj-test-utils.core :as co]
             [kafka-clj-test-utils.consumer :as ktc]
             [kafka-clj-test-utils.producer :as ktp]
             [zookareg.core :as zkr]
             [integrant.core :as ig]))
 
+
+;; Taken from https://gitlab.com/vise890/multistub
+(defn with-around-fns
+  "Executes `f` within the context of `around-fns`. `around-fns` is a (sorted!)
+  sequence of functions that take a no arg function.
+
+  E.g.:
+
+  (with-around-fns [with-zookeeper-fn
+                    with-kafka-fn]
+                   produce-some-stuff-on-kafka-fn)"
+  [around-fns f]
+  (cond
+    (empty? around-fns) (f)
+    (= 1 (count around-fns)) ((first around-fns) f)
+    :else (with-around-fns (butlast around-fns)
+                           (fn [] ((last around-fns) f)))))
 
 (defn with-ig-sys
   [ig-config f]
@@ -18,15 +34,12 @@
 
 (def topic-a "test.topic.a")
 (def topic-b "test.topic.b")
-
-
 (def ig-config {:kafka-clj-utils.schema-registry/client {:base-url "http://localhost:8081"}})
-
 (def config (assoc-in ig-config
                       [:kafka-config :bootstrap.servers] "127.0.0.1:9092"))
 
 
-(use-fixtures :each (partial ms/with-around-fns [zkr/with-zookareg-fn
+(use-fixtures :each (partial with-around-fns [zkr/with-zookareg-fn
                                                  (partial co/with-topic topic-a)
                                                  (partial co/with-topic topic-b)
                                                  (partial with-ig-sys ig-config)]))
