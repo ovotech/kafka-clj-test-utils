@@ -7,7 +7,7 @@
             [integrant.core :as ig]))
 
 
-;; Taken from https://gitlab.com/vise890/multistub
+;; Taken from https://gitlab.com/vise890/multistub with permission
 (defn with-around-fns
   "Executes `f` within the context of `around-fns`. `around-fns` is a (sorted!)
   sequence of functions that take a no arg function.
