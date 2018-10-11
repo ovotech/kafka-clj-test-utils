@@ -10,7 +10,10 @@
                  [ovotech/kafka-avro-confluent "0.8.5"]
                  [vise890/zookareg "1.0.2-1"]]
 
-  :profiles {:ci  {:deploy-repositories
+  :profiles {:dev {:resource-paths ["dev/resources" "test/resources"]
+                   :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
+                                  [ch.qos.logback/logback-core "1.2.3"]]}
+             :ci  {:deploy-repositories
                    [["clojars" {:url           "https://clojars.org/repo"
                                 :username      :env ;; LEIN_USERNAME
                                 :password      :env ;; LEIN_PASSWORD
