@@ -7,7 +7,7 @@
   :dependencies [[org.apache.kafka/kafka-clients "1.1.1" :exclusions [org.scala-lang/scala-library]]
                  [org.apache.kafka/kafka-streams "1.1.1"]
                  [org.clojure/clojure "1.9.0"]
-                 [ovotech/kafka-avro-confluent "0.10.0"]
+                 [ovotech/kafka-avro-confluent "0.11.0"]
                  [vise890/zookareg "1.1.1-1"]]
 
   :profiles {:dev {:resource-paths ["dev/resources" "test/resources"]
