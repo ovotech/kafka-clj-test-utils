@@ -24,39 +24,22 @@
     :else (with-around-fns (butlast around-fns)
                            (fn [] ((last around-fns) f)))))
 
-(defn with-ig-sys
-  [ig-config f]
-  (let [_       (ig/load-namespaces ig-config)
-        system  (ig/init ig-config)]
-    (try
-      (f)
-      (finally (ig/halt! system)))))
-
 (def topic-a "test.topic.a")
 (def topic-b "test.topic.b")
-(def ig-config {:kafka-clj-utils.schema-registry/client {:base-url "http://localhost:8081"}})
-(def config (assoc-in ig-config
-                      [:kafka-config :bootstrap.servers] "127.0.0.1:9092"))
+
+(def config {:kafka/config       {:bootstrap.servers "127.0.0.1:9092"}
+             :kafka.serde/config {:schema-registry/base-url "http://localhost:8081"}})
 
 
 (use-fixtures :each (partial with-around-fns [zkr/with-zookareg-fn
                                                  (partial co/with-topic topic-a)
-                                                 (partial co/with-topic topic-b)
-                                                 (partial with-ig-sys ig-config)]))
-
-
+                                                 (partial co/with-topic topic-b)]))
 
 (def test-schema
   {:namespace "kafkaCljTestUtils"
    :type      "record"
    :name      "TestRecord"
-   :fields    [#_{:name "metadata"
-                :type {:type   "record"
-                       :name   "metaV1"
-                       :fields [{:name "eventId" :type "string"}
-                                {:name "createdAt" :type "long" :logicalType "timestamp-millis"}
-                                {:name "traceToken" :type "string"}]}}
-               {:name "foo" :type "string"}
+   :fields    [{:name "foo" :type "string"}
                {:name "bar" :type "string"}]})
 
 (def event1 {:foo "FOO" :bar "BAR"})
