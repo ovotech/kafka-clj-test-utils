@@ -1,4 +1,4 @@
-(defproject ovotech/kafka-clj-test-utils "0.2.0-1"
+(defproject ovotech/kafka-clj-test-utils "1.1.1-1"
   :description "Companion test utility library for `ovotech/kafka-clj-utils`"
   :url "https://github.com/ovotech/kafka-clj-test-utils"
   :license {:name "Eclipse Public License"
