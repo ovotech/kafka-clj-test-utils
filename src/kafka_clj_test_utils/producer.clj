@@ -6,7 +6,7 @@
            org.apache.kafka.common.serialization.StringSerializer))
 
 (defn with-producer
-  ([kafka-config kafka-serde-config f]
+  ([kafka-config kafka-serde f]
    (let [pc               (co/normalize-config (merge kafka-config
                                                       {:retries            3,
                                                        :acks               "all",
@@ -15,24 +15,24 @@
                                                        :request.timeout.ms 10000,
                                                        :max.block.ms       10000}))
          key-serializer   (StringSerializer.)
-         value-serializer (ser/->avro-serializer kafka-serde-config)
+         value-serializer kafka-serde
          k-producer       (KafkaProducer. pc key-serializer value-serializer)]
      (try (f k-producer) (finally (.close k-producer)))))
   ([config f]
-   (with-producer (:kafka/config config) (:kafka.serde/config config) f)))
+   (with-producer (:kafka/config config) (ser/->avro-serializer (:kafka.serde/config config)) f)))
 
 (defn produce
-  ([kafka-config kafka-serde-config topic schema val]
+  ([kafka-config kafka-serde topic schema val]
    (with-producer
      kafka-config
-     kafka-serde-config
+     kafka-serde
      (fn [p]
        (deref (.send p (ProducerRecord. topic (str (UUID/randomUUID)) {:value val
                                                                        :schema schema})))
        (.flush p))))
   ([config topic schema val]
    (produce (:kafka/config config)
-            (:kafka.serde/config config)
+            (ser/->avro-serializer (:kafka.serde/config config))
             topic
             schema
             val)))
