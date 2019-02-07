@@ -76,16 +76,25 @@
              (dec retries)))))
 
 (defn with-consumer
-  ([kafka-config kafka-serde f]
+  ([kafka-config kafka-serde-config f]
    (let [cc                 (co/normalize-config (merge kafka-config
                                                         {:group.id (str "kafka-clj-test-utils-"
                                                                         (UUID/randomUUID))}))
          key-deserializer   (StringDeserializer.)
-         value-deserializer kafka-serde
+         value-deserializer (des/->avro-deserializer (:kafka.serde/config config))
          k-consumer         (KafkaConsumer. cc key-deserializer value-deserializer)]
      (try (f k-consumer) (finally (.close k-consumer)))))
   ([config f]
-   (with-consumer (:kafka/config config) (des/->avro-deserializer (:kafka.serde/config config)) f)))
+   (with-consumer (:kafka/config config) (:kafka.serde/config config) f)))
+
+(defn with-consumer*
+  [kafka-config value-deserializer f]
+  (let [cc                 (co/normalize-config (merge kafka-config
+                                                       {:group.id (str "kafka-clj-test-utils-"
+                                                                       (UUID/randomUUID))}))
+        key-deserializer   (StringDeserializer.)
+        k-consumer         (KafkaConsumer. cc key-deserializer value-deserializer)]
+    (try (f k-consumer) (finally (.close k-consumer)))))
 
 (defn consume
   ([config topic & args]
@@ -97,7 +106,7 @@
 
 (defn consume*
   ([config kafka-serde topic & args]
-   (with-consumer config kafka-serde
+   (with-consumer* config kafka-serde
      (fn [consumer]
        (assign-partition-0 consumer topic)
        (seek-to-beginning consumer)
