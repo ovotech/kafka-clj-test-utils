@@ -87,9 +87,26 @@
   ([config f]
    (with-consumer (:kafka/config config) (:kafka.serde/config config) f)))
 
+(defn with-consumer*
+  [kafka-config value-deserializer f]
+  (let [cc                 (co/normalize-config (merge kafka-config
+                                                       {:group.id (str "kafka-clj-test-utils-"
+                                                                       (UUID/randomUUID))}))
+        key-deserializer   (StringDeserializer.)
+        k-consumer         (KafkaConsumer. cc key-deserializer value-deserializer)]
+    (try (f k-consumer) (finally (.close k-consumer)))))
+
 (defn consume
   ([config topic & args]
    (with-consumer config
+     (fn [consumer]
+       (assign-partition-0 consumer topic)
+       (seek-to-beginning consumer)
+       (apply poll* consumer args)))))
+
+(defn consume*
+  ([config value-deserializer topic & args]
+   (with-consumer* config value-deserializer
      (fn [consumer]
        (assign-partition-0 consumer topic)
        (seek-to-beginning consumer)
