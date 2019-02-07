@@ -81,7 +81,7 @@
                                                         {:group.id (str "kafka-clj-test-utils-"
                                                                         (UUID/randomUUID))}))
          key-deserializer   (StringDeserializer.)
-         value-deserializer (des/->avro-deserializer (:kafka.serde/config config))
+         value-deserializer (des/->avro-deserializer kafka-serde-config)
          k-consumer         (KafkaConsumer. cc key-deserializer value-deserializer)]
      (try (f k-consumer) (finally (.close k-consumer)))))
   ([config f]
