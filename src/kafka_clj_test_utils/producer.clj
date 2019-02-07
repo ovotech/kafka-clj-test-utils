@@ -51,10 +51,10 @@
             val)))
 
 (defn produce*
-  [kafka-config kafka-serializer topic schema val]
+  [kafka-config value-serializer topic schema val]
   (with-producer*
     kafka-config
-    kafka-serializer
+    value-serializer
     (fn [p]
       (deref (.send p (ProducerRecord. topic (str (UUID/randomUUID)) {:value val
                                                                       :schema schema})))

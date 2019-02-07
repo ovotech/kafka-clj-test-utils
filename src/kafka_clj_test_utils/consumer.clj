@@ -105,8 +105,8 @@
        (apply poll* consumer args)))))
 
 (defn consume*
-  ([config kafka-serde topic & args]
-   (with-consumer* config kafka-serde
+  ([config value-deserializer topic & args]
+   (with-consumer* config value-deserializer
      (fn [consumer]
        (assign-partition-0 consumer topic)
        (seek-to-beginning consumer)
