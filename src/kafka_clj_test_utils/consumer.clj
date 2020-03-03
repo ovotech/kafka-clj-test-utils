@@ -75,7 +75,7 @@
       (recur (concat received
                      (map ConsumerRecord->m (.poll consumer poll-timeout)))
              (dec retries)
-             (* timeout (backoff? 2 1))))))
+             (* timeout (if backoff? 2 1))))))
 
 (defn with-consumer
   ([kafka-config kafka-serde-config f]
