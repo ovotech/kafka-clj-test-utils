@@ -65,15 +65,17 @@
 
 (defn poll*
   [consumer &
-   {:keys [expected-msgs retries poll-timeout],
-    :or {expected-msgs 1, retries 200, poll-timeout 25}}]
+   {:keys [expected-msgs retries poll-timeout backoff?],
+    :or {expected-msgs 1, retries 200, poll-timeout 25, backoff? false}}]
   (loop [received []
-         retries retries]
+         retries retries
+         poll-timeout poll-timeout]
     (if (or (>= (count received) expected-msgs) (zero? retries))
       received
       (recur (concat received
                      (map ConsumerRecord->m (.poll consumer poll-timeout)))
-             (dec retries)))))
+             (dec retries)
+             (* poll-timeout (if backoff? 2 1))))))
 
 (defn with-consumer
   ([kafka-config kafka-serde-config f]
