@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url  "https://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.apache.kafka/kafka-clients "2.1.0" :exclusions [org.scala-lang/scala-library]]
+  :dependencies [[org.apache.kafka/kafka-clients "2.4.1" :exclusions [org.scala-lang/scala-library]]
                  [org.clojure/clojure "1.9.0"]
                  [ovotech/kafka-avro-confluent "2.1.0-2"]]
 
