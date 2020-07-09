@@ -2,7 +2,7 @@
   (:require [clojure.walk :refer [stringify-keys]]
             [kafka-avro-confluent.schema-registry-client :as schema-registry])
   (:import [java.util Properties]
-           [kafka.admin AdminClient]
+           [kafka.admin AdminUtils]
            [kafka.utils ZKStringSerializer$ ZkUtils]
            [org.I0Itec.zkclient ZkClient ZkConnection]))
 
@@ -12,7 +12,7 @@
   (with-open [zk (ZkClient. "localhost:2181" 1000 1000 (ZKStringSerializer$/MODULE$))]
     (let [zc (ZkConnection. "localhost:2181")
           zu (ZkUtils. zk zc false)]
-      (AdminClient/createTopic zu topic 1 1
+      (AdminUtils/createTopic zu topic 1 1
                               (Properties.)
                               (kafka.admin.RackAwareMode$Enforced$.)))))
 
